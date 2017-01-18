@@ -1,1 +1,9 @@
-yes y | emacs $1 --user $USER --batch -l ~/lib/emacs-batch/cleanTexFile.el 1>/dev/null 2>&1
+#!/usr/bin/bash
+
+for i in $@
+do
+    if [ -f $i ]
+    then
+	yes | emacs "$i" --batch -l ~/lib/emacs-batch/cleanTeXFile.el
+    fi
+done
