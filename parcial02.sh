@@ -142,7 +142,7 @@ if [ "$?" -eq 0 ]
 then
     wget http://www1.eafit.edu.co/fcardona/parcial02.pdf
 
-    if [ "$?" -neq 0 ]
+    if [ "$?" -ne 0 ]
     then
         echo "Problemas trayendo el parcial"
         echo "Debe hacerlo manualmente"
