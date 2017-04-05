@@ -122,12 +122,12 @@ which wget 2>/dev/null
 
 if [ "$?" -eq 0 ]
 then
-    wget http://www1.eafit.edu.co/fcardona/parcial02.zip
+    wget http://www1.eafit.edu.co/fcardona/parcial02sup.zip
 
     if [ "$?" -eq 0 ]
     then
-       unzip parcial02.zip
-       rm parcial02.zip
+       unzip parcial02sup.zip
+       rm parcial02syo.zip
        svn add proccalc generador addmult
     else
         echo "Problemas adicionando puntos del parcial"
@@ -145,7 +145,7 @@ which wget 2>/dev/null
 
 if [ "$?" -eq 0 ]
 then
-    wget http://www1.eafit.edu.co/fcardona/parcial02.pdf
+    wget http://www1.eafit.edu.co/fcardona/parcial02sup.pdf
 
     if [ "$?" -ne 0 ]
     then
