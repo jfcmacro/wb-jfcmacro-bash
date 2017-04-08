@@ -5,19 +5,19 @@
 # post: This script does work with hidden files and directories.
 # date: 07/12/2011
 # programmer: Juan Francisco Cardona McCormick
-# 
+#
 
-recursive_part() { 
+recursive_part() {
    local i
    echo $*
    cd "$*"
    for i in .* *
-   do 
-       if [ "$i" != "." ] ; then 
+   do
+       if [ "$i" != "." ] ; then
           if [ "$i" != ".." ] ; then
              if [ "$i" != ".*" ] ; then
                 if [ "$i" != "*" ] ; then
-                   file=`echo $i | sed 's/ /\\ /g'` 
+                   file=`echo $i | sed 's/ /\\ /g'`
                    chown fcardona "$file"
                    chgrp fcardona "$file"
                    echo $file
