@@ -3,8 +3,6 @@
 # date: 11/08/2017
 #
 
-echo "Starting checkout Repos"
-
 function createDir {
     if [ ! -d $1 ]
     then
@@ -33,6 +31,32 @@ function linkDir {
 	fi
     fi
 }
+
+while getopts ":ir:u:p:" opt; do
+    case $opt in
+	i)
+	    echo "installing etgetrepos"
+	    ;;
+	r)
+	    echo "Repository: $OPTARG"
+	    ;;
+	u)
+	    echo "User: $OPTARG"
+	    ;;
+	p)  echo "Prefix: $OPTARG"
+	    ;;
+	\?)
+	    echo "Invalid option: -$OPTARG" >&2
+	    exit 1
+	    ;;
+	:)
+	    echo "Option -$OPTARG requires an argument." >&2
+	    exit 1
+	    ;;
+    esac
+done
+
+exit 0
 
 cd $HOME
 
