@@ -32,7 +32,16 @@ function linkDir {
     fi
 }
 
-while getopts ":ir:u:p:" opt; do
+function usage {
+    echo "Usage: $1 -i" >&2
+    echo "       $1 -h" >&2
+    echo "       $1 -r <repo> -u <username> -p <prefix-repo>" >&2
+    exit $2
+}
+
+progname=$0
+
+while getopts ":ir:u:p:h" opt; do
     case $opt in
 	i)
 	    echo "installing etgetrepos"
@@ -43,11 +52,14 @@ while getopts ":ir:u:p:" opt; do
 	u)
 	    echo "User: $OPTARG"
 	    ;;
-	p)  echo "Prefix: $OPTARG"
+	p)
+	    echo "Prefix: $OPTARG"
+	    ;;
+	h)
+	    usage $progname 0
 	    ;;
 	\?)
-	    echo "Invalid option: -$OPTARG" >&2
-	    exit 1
+	    usage $progname 1
 	    ;;
 	:)
 	    echo "Option -$OPTARG requires an argument." >&2
