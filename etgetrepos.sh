@@ -1,7 +1,12 @@
 #!/bin/env bash
 
-# date: 11/08/2017
 #
+# date: 11/08/2017
+# user: Juan Francisco Cardona Mc'Cormick (jfcmacro)
+# purpose: This program create a directory hierarchy
+#
+
+
 function tolower {
     local mytolower=$(echo $1 | tr '[:upper:]' '[:lower:]')
     echo "$mytolower"
@@ -33,12 +38,12 @@ function linkDir {
     ALTHOME=/cygdrive/c/Users
     if [ -d $HOME/$1 ]
     then
-	if ! [ -h $HOME/$2 ]; then
-	    ln -s $HOME/$1 $HOME/$2
+	if  [ ! -h $HOME/$2 ]; then
+	    ln -s $HOME/$1  $HOME/$2
 	fi
     else
 	if [ -d $ALTHOME/$3/$1 -a ! -h $HOME/$2 ]; then
-            ln -s $ALTHOME/$3/$1 $HOME/$2
+            ln -s $ALTHOME/$3/$1  $HOME/$2
 	fi
     fi
 }
@@ -102,13 +107,13 @@ done
 
 linkDir AppData appdata $USERNAME
 linkDir Documents docs $USERNAME
-# linkDir Desktop escritorio $USERNAME
+linkDir Desktop escritorio $USERNAME
 linkDir Downloads descargas $USERNAME
 
 cd $HOME
 
 if  [ ! -x "$(command -v ewe)" ]
-then 
+then
     echo "Installing ewe last version, it takes few minutes"
     cabal update
     cabal install ewe --prefix $(cygpath -w $HOME)
@@ -141,12 +146,3 @@ else
 fi
 
 createSvnDirGo clases
-# createSvnDirGo clase08
-
-# This must be erased
-# wget http://www1.eafit.edu.co/fcardona/examples/archives/aas.zip
-# unzip aas.zip
-# svn add *.java
-# rm -f aas.zip
-
-# exec bash
