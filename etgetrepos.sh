@@ -51,7 +51,7 @@ function linkDir {
 function usage {
     echo "Usage: $1 -i" >&2
     echo "       $1 -h" >&2
-    echo "       $1 -r <repo> -u <username> -p <prefix-repo>" >&2
+    echo "       $1 [-r <repo>] [-u <username>] [-p <prefix-repo>]" >&2
     exit $2
 }
 
