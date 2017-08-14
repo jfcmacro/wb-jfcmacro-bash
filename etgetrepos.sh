@@ -96,7 +96,7 @@ if [ -z "${JAVA_HOME+x}" ]; then
     echo 'export JAVA_VERSION="1.8.0"' > .bashrc
     echo "export JAVA_HOME=/cygdrive/c/Program\ Files/Java/jdk$JAVA_VERSION/" >> .bashrc
     echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> .bashrc
-    echo "export CLASSPATH=\$CLASSPATH;.;" >> .bashrc
+    echo 'export CLASSPATH=".:\$CLASSPATH"' >> .bashrc
     . .bashrc
 fi
 
