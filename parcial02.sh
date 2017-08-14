@@ -1,20 +1,17 @@
 #!/usr/bin/bash
 
 # date: 01/04/2017
-#
+# 
 
-if [ -z ${GRUPO+x} ]
+if [ -z ${REPO+x} ]
 then
-    echo 'Defina la variable GRUPO: export GRUPO="0"'
-    echo 'o export GRUPO="3"'
-    echo 'o export GRUPO="4"'
-    echo 'Segun el grupo que tiene asignado'
-    echo 'Defina la variable TEMA: export TEMA="A"'
-    echo 'o TEMA="B"'
+    echo 'Defina la variable REPO: export GRUPO=<REPONAME>'
     exit 1
 fi
 
 echo "Iniciando el parcial"
+
+cd
 
 if [ ! -d bin ]
 then
@@ -38,49 +35,73 @@ fi
 
 if [ -d $HOME/AppData ]
 then
-    ln -s $HOME/AppData $HOME/appdata
+    if [ ! -L $HOME/appdata ]
+    then
+	ln -s $HOME/AppData $HOME/appdata
+    fi
 else
     if [ -d /cygdrive/c/Users/$USERNAME/AppData ]
     then
-        ln -s /cygdrive/c/Users/$USERNAME/AppData $HOME/appdata
+	if [ ! -L $HOME/appdata ]
+	then
+            ln -s /cygdrive/c/Users/$USERNAME/AppData $HOME/appdata
+	fi
     fi
 fi
 
 if [ -d $HOME/Documents ]
 then
-    ln -s $HOME/Documents $HOME/docs
+    if [ ! -L $HOME/docs ]
+    then
+	ln -s $HOME/Documents $HOME/docs
+    fi
 else
     if [ -d /cygdrive/c/Users/$USERNAME/Documents ]
     then
-        ln -s /cygdrive/c/Users/$USERNAME/Documents $HOME/docs
+	if [ ! -L $HOME/docs ]
+	then
+           ln -s /cygdrive/c/Users/$USERNAME/Documents $HOME/docs
+	fi
     fi
 fi
 
 if [ -d $HOME/Desktop ]
 then
-    ln -s $HOME/Desktop $HOME/escritorio
+    if [ ! -L $HOME/escritorio ]
+    then
+	ln -s $HOME/Desktop $HOME/escritorio
+    fi
 else
     if [ -d /cygdrive/c/Users/$USERNAME/Desktop ]
     then
-        ln -s /cygdrive/c/Users/$USERNAME/Desktop $HOME/escritorio
+	if [ ! -L $HOME/escritorio ]
+	then
+           ln -s /cygdrive/c/Users/$USERNAME/Desktop $HOME/escritorio
+	fi
     fi
 fi
 
 if [ -d $HOME/Downloads ]
 then
-    ln -s $HOME/Downloads $HOME/descargas
+    if [ ! -L $HOME/descargas ]
+    then 
+	ln -s $HOME/Downloads $HOME/descargas
+    fi
 else
     if [ -d /cygdrive/c/Users/$USERNAME/Downloads ]
     then
-        ln -s /cygdrive/c/Users/$USERNAME/Downloads $HOME/descargas
+	if [ ! -L $HOME/descargas ]
+	then
+            ln -s /cygdrive/c/Users/$USERNAME/Downloads $HOME/descargas
+	fi
     fi
 fi
 
 # cabal update
 # cabal install ewe
 
-echo "export PATH=\$HOME/appdata/Roaming/cabal/bin:\$PATH" >> .profile
-source .profile
+# echo "export PATH=\$HOME/appdata/Roaming/cabal/bin:\$PATH" >> .profile
+# source .profile
 
 cd $HOME/st0244
 
@@ -93,7 +114,7 @@ fi
 
 if [ "$?" -ne 0 ]
 then
-    echo "Usted tiene un problema para descargar el parcial debe hacerlo manualmente"
+    echo "Descargar el parcial manualmente o reintente nuevamente"
     exit 1
 fi
 
@@ -128,10 +149,10 @@ then
     then
        unzip parcial02.zip
        rm parcial02.zip
-       svn add proccalc generador addmult
+       svn add * 2>/dev/null
     else
-        echo "Problemas adicionando puntos del parcial"
-        echo "Debe hacerlo manualmente"
+        echo 'Problemas adicionando puntos del parcial'
+        echo 'Debe hacerlo manualmente'
     fi
 fi
 

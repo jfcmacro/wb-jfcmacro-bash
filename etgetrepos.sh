@@ -2,6 +2,16 @@
 
 # date: 11/08/2017
 #
+function tolower {
+    local mytolower=$(echo $1 | tr '[:upper:]' '[:lower:]')
+    echo "$mytolower"
+}
+
+USERNAME=`id -un`
+PREFIX="2447"
+REPO="$PREFIX$USERNAME"
+SUBJECT="ST0244"
+SUBLOWER=$(tolower $SUBJECT)
 
 function createDir {
     if [ ! -d $1 ]
@@ -23,11 +33,12 @@ function linkDir {
     ALTHOME=/cygdrive/c/Users
     if [ -d $HOME/$1 ]
     then
-	ln -s $HOME/$1 $HOME/$2
+	if ! [ -h $HOME/$2 ]; then
+	    ln -s $HOME/$1 $HOME/$2
+	fi
     else
-	if [ -d $ALTHOME/$USERNAME/$1 ]
-	then
-            ln -s $ALTHOME/$USERNAME/$1 $HOME/$2
+	if [ -d $ALTHOME/$3/$1 -a ! -h $HOME/$2 ]; then
+            ln -s $ALTHOME/$3/$1 $HOME/$2
 	fi
     fi
 }
@@ -41,22 +52,26 @@ function usage {
 
 progname=$0
 
-while getopts ":ir:u:p:h" opt; do
+while getopts ":ir:u:p:hs:" opt; do
     case $opt in
 	i)
 	    echo "installing etgetrepos"
 	    ;;
 	r)
-	    echo "Repository: $OPTARG"
+	    REPO=$OPTARG
 	    ;;
 	u)
-	    echo "User: $OPTARG"
+	    USERNAME=$OPTARG
 	    ;;
 	p)
-	    echo "Prefix: $OPTARG"
+	    PREFIX=$OPTARG
 	    ;;
 	h)
 	    usage $progname 0
+	    ;;
+	s)
+	    SUBJECT=$OPTARG
+	    SUBLOWER=$(tolower $SUBJECT)
 	    ;;
 	\?)
 	    usage $progname 1
@@ -68,35 +83,37 @@ while getopts ":ir:u:p:h" opt; do
     esac
 done
 
-exit 0
+# exit 0
 
 cd $HOME
 
-if [ -z "${JAVA_HOME+x}" ]
-then
-    echo "export JAVA_HOME=/cygdrive/c/Program\ Files/Java/jdk1.8.0/" >> .bashrc
+if [ -z "${JAVA_HOME+x}" ]; then
+    echo 'export JAVA_VERSION="1.8.0"' > .bashrc
+    echo "export JAVA_HOME=/cygdrive/c/Program\ Files/Java/jdk$JAVA_VERSION/" >> .bashrc
     echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> .bashrc
-    source .bashrc
+    echo "export CLASSPATH=\$CLASSPATH;.;" >> .bashrc
+    . .bashrc
 fi
-
 
 for i in bin lib share include
 do
     createDir $i
 done
 
-linkDir AppData appdata
-linkDir Documents docs
-linkDir Desktop escritorio
-linkDir Downloads descargas
+linkDir AppData appdata $USERNAME
+linkDir Documents docs $USERNAME
+# linkDir Desktop escritorio $USERNAME
+linkDir Downloads descargas $USERNAME
 
-if ! [ -x "$(ewe)" ]
+cd $HOME
+
+if  [ ! -x "$(command -v ewe)" ]
 then 
     echo "Installing ewe last version, it takes few minutes"
     cabal update
-    cabal install ewe
-    echo "export PATH=\$HOME/appdata/Roaming/cabal/bin:\$PATH" >> .bashrc
-    source .bashrc
+    cabal install ewe --prefix $(cygpath -w $HOME)
+    echo "export PATH=\$HOME/bin:\$PATH" >> .bashrc
+    . .bashrc
 fi
 
 createDir st0244
@@ -105,7 +122,7 @@ cd $HOME/st0244
 
 if [ -z ${REPO+x} ]
 then
-    svn co https://svn.riouxsvn.com/2447$USERNAME --username $USERNAME
+    svn co https://svn.riouxsvn.com/$PREFIX$USERNAME --username $USERNAME
 else
     svn co https://svn.riouxsvn.com/$REPO --username $USERNAME
 fi
@@ -118,7 +135,7 @@ fi
 
 if [ -z ${REPO+x} ]
 then
-    cd 2447$USERNAME
+    cd $PREFIX$USERNAME
 else
     cd $REPO
 fi
