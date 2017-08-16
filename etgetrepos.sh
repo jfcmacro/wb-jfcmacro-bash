@@ -39,29 +39,31 @@ function linkDir {
     if [ -d $HOME/$1 ]
     then
 	if  [ ! -h $HOME/$2 ]; then
-	    ln -s $HOME/$1  $HOME/$2
+	    ln -s $HOME/$1  $HOME/$2 2>/dev/null
 	fi
     else
-	if [ -d $ALTHOME/$3/$1 -a ! -h $HOME/$2 ]; then
-            ln -s $ALTHOME/$3/$1  $HOME/$2
+	if [ -d $ALTHOME/$3/$1]; then
+            if [ ! -h $HOME/$2 ]; then
+                ln -s $ALTHOME/$3/$1  $HOME/$2 2>/dev/null
+            fi
 	fi
     fi
 }
 
 function usage {
-    echo "Usage: $1 -i" >&2
     echo "       $1 -h" >&2
     echo "       $1 [-r <repo>] [-u <username>] [-p <prefix-repo>]" >&2
     exit $2
+}
+
+function appendFile {
+    echo $1 >> $2
 }
 
 progname=$0
 
 while getopts ":ir:u:p:hs:" opt; do
     case $opt in
-	i)
-	    echo "installing etgetrepos"
-	    ;;
 	r)
 	    REPO=$OPTARG
 	    ;;
@@ -92,12 +94,13 @@ done
 
 cd $HOME
 
-if [ -z "${JAVA_HOME+x}" ]; then
-    echo 'export JAVA_VERSION="1.8.0"' > .bashrc
-    echo "export JAVA_HOME=/cygdrive/c/Program\ Files/Java/jdk$JAVA_VERSION/" >> .bashrc
-    echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> .bashrc
+if [ -z "${JAVA_HOME}" ]; then
+    echo -n "java version?"
+    read -r JAVA_VERSION
+    appendFile "export JAVA_HOME=/cygdrive/c/Program\ Files/Java/jdk$JAVA_VERSION/" .bashrc
+    appendFile "export PATH=\$PATH:\$JAVA_HOME/bin" .bashrc
 #    echo "export CLASSPATH=\$(cygpath -pw .:\$CLASSPATH)">> .bashrc
-    . .bashrc
+    source .bashrc
 fi
 
 for i in bin lib share include
@@ -117,15 +120,15 @@ then
     echo "Installing ewe last version, it takes few minutes"
     cabal update
     cabal install ewe --prefix $(cygpath -w $HOME)
-    echo "export PATH=\$HOME/bin:\$PATH" >> .bashrc
-    . .bashrc
+    appendFile "export PATH=\$HOME/bin:\$PATH" .bashrc
+    source .bashrc
 fi
 
-createDir st0244
+createDir $SUBLOWER
 
-cd $HOME/st0244
+cd $HOME/$SUBLOWER
 
-if [ -z ${REPO+x} ]
+if [ -z "${REPO}" ]
 then
     svn co https://svn.riouxsvn.com/$PREFIX$USERNAME --username $USERNAME
 else
@@ -137,12 +140,3 @@ then
     echo "You don't have a repository, please add one"
     exit 1
 fi
-
-if [ -z ${REPO+x} ]
-then
-    cd $PREFIX$USERNAME
-else
-    cd $REPO
-fi
-
-createSvnDirGo clases
