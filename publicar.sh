@@ -1,11 +1,9 @@
 #!/bin/bash
 
-for i in $@
-do
+for i in $@; do
     file=$i
 
-    if [ -f $file ]
-    then
+    if [ -f $file ]; then
 
 	filename=`basename $file .pdf`
     
